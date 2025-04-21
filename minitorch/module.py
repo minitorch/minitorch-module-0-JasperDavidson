@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional, Sequence, Tuple
 
-
 class Module:
     """Modules form a tree that store parameters and other
     submodules. They make up the basis of neural network stacks.
@@ -31,13 +30,19 @@ class Module:
 
     def train(self) -> None:
         """Set the mode of this module and all descendent modules to `train`."""
-        # TODO: Implement for Task 0.4.
-        raise NotImplementedError("Need to implement for Task 0.4")
+
+        self.training = True
+
+        for module in self._modules.values():
+            module.train()
 
     def eval(self) -> None:
         """Set the mode of this module and all descendent modules to `eval`."""
-        # TODO: Implement for Task 0.4.
-        raise NotImplementedError("Need to implement for Task 0.4")
+
+        self.training = False
+
+        for module in self._modules.values():
+            module.eval()
 
     def named_parameters(self) -> Sequence[Tuple[str, Parameter]]:
         """Collect all the parameters of this module and its descendents.
@@ -45,15 +50,36 @@ class Module:
         Returns
         -------
             The name and `Parameter` of each ancestor parameter.
-
         """
-        # TODO: Implement for Task 0.4.
-        raise NotImplementedError("Need to implement for Task 0.4")
+
+        param_list = []
+
+        for name, param in self._parameters.items():
+            param_list.append((name, param))
+
+        for name, module in self._modules.items():
+            module_params = module.named_parameters()
+            prefix = name + "."
+
+            module_named_params = [(prefix + param_name, param_value) for param_name, param_value in module_params]
+            param_list.extend(module_named_params)
+
+        print(param_list)
+
+        return param_list
 
     def parameters(self) -> Sequence[Parameter]:
         """Enumerate over all the parameters of this module and its descendents."""
-        # TODO: Implement for Task 0.4.
-        raise NotImplementedError("Need to implement for Task 0.4")
+
+        param_list = []
+
+        for param in self._parameters.values():
+            param_list.append(param)
+
+        for module in self._modules.values():
+            param_list.extend(module.parameters())
+
+        return param_list
 
     def add_parameter(self, k: str, v: Any) -> Parameter:
         """Manually add a parameter. Useful helper for scalar parameters.
