@@ -38,7 +38,7 @@ def mul(a: float, b: float) -> float:
 
     return a * b
 
-def id(x):
+def id(x: any):
     """
     Returns the value passed to the function.
     """
